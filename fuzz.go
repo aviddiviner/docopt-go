@@ -1,3 +1,7 @@
+// +build gofuzz
+
+package docopt
+
 /* -- Fuzz tests usage
 
 $ go get github.com/dvyukov/go-fuzz/go-fuzz
@@ -20,9 +24,6 @@ File.read("testcases.docopt").split(/r"""/)[1..-1].each_with_index do |chunk, t|
 end
 
 */
-
-// +build gofuzz
-package docopt
 
 import (
 	"encoding/json"
