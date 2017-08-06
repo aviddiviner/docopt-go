@@ -7,7 +7,7 @@ import (
 )
 
 func TestOptsUsage(t *testing.T) {
-	usage := "Usage: sleep <seconds> [--now]"
+	usage := "Usage: sleep <seconds> [--now] [-v...]"
 	var opts Opts
 
 	opts, _ = ParseArgs(usage, []string{"10"}, "")
@@ -31,10 +31,28 @@ func TestOptsUsage(t *testing.T) {
 	if err != nil || !reflect.DeepEqual(b, true) {
 		t.Fail()
 	}
+
+	opts, _ = ParseArgs(usage, []string{"10"}, "")
+	c0, err := opts.Count("-v")
+	if err != nil || !reflect.DeepEqual(c0, int(0)) {
+		t.Fail()
+	}
+
+	opts, _ = ParseArgs(usage, []string{"10", "-v"}, "")
+	c1, err := opts.Count("-v")
+	if err != nil || !reflect.DeepEqual(c1, int(1)) {
+		t.Fail()
+	}
+
+	opts, _ = ParseArgs(usage, []string{"10", "-vv"}, "")
+	c2, err := opts.Count("-v")
+	if err != nil || !reflect.DeepEqual(c2, int(2)) {
+		t.Fail()
+	}
 }
 
 func TestOptsErrors(t *testing.T) {
-	usage := "Usage: sleep <seconds> [--now]"
+	usage := "Usage: sleep <seconds> [--now] [-v...]"
 	var opts Opts
 	var err error
 
@@ -65,6 +83,27 @@ func TestOptsErrors(t *testing.T) {
 	if err == nil {
 		t.Fail()
 	}
+	_, err = opts.Count("--now") // errType
+	if err == nil {
+		t.Fail()
+	}
+
+	_, err = opts.Bool("-v") // errType
+	if err == nil {
+		t.Fail()
+	}
+	_, err = opts.String("-v") // errType
+	if err == nil {
+		t.Fail()
+	}
+	_, err = opts.Int("-v") // errType
+	if err == nil {
+		t.Fail()
+	}
+	_, err = opts.Float64("-v") // errType
+	if err == nil {
+		t.Fail()
+	}
 
 	_, err = opts.Int("<missing>") // errKey
 	if err == nil {
@@ -79,6 +118,10 @@ func TestOptsErrors(t *testing.T) {
 		t.Fail()
 	}
 	_, err = opts.String("<missing>") // errKey
+	if err == nil {
+		t.Fail()
+	}
+	_, err = opts.Count("<missing>") // errKey
 	if err == nil {
 		t.Fail()
 	}

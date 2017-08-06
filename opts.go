@@ -77,6 +77,19 @@ func (o Opts) Int(key string) (i int, err error) {
 	return
 }
 
+// Count returns the count of repeating options
+func (o Opts) Count(key string) (c int, err error) {
+	v, ok := o[key]
+	if !ok {
+		err = errKey(key)
+		return
+	}
+	if c, ok = v.(int); !ok {
+		err = errType(key)
+	}
+	return
+}
+
 func (o Opts) Float64(key string) (f float64, err error) {
 	s, err := o.String(key)
 	if err != nil {
